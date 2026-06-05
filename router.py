@@ -56,14 +56,10 @@ def on_message(client, userdata, msg):
 
     elif topic == "fleet/telemetry/trucks":
         v_id = data["vehicle_id"]
+        loc = data["location"] # <-- Router just reads it now
 
-        # save directly to mongo
         mycol.insert_one(data.copy())
-
-        # pick random city and save to neo4j
-        loc = random.choice(cities_list)
         
-        # using f-string for the cypher query
         cypher_query = f"MERGE (v:Vehicle {{id: '{v_id}'}}) MERGE (c:City {{name: '{loc}'}}) MERGE (v)-[:VISITED]->(c)"
         graph_db.run(cypher_query)
 

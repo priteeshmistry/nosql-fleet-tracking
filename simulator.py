@@ -4,31 +4,41 @@ import json
 import random
 import datetime
 
-# connect to mqtt broker
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.connect("localhost", 1883, 60)
 client.loop_start()
 
-print("Simulator started. sending data...")
+print("Simulator started. Registering fleet in SQL...")
+
+# --- NEW REGISTRY LOGIC ---
+for t_id in range(101, 106):
+    admin_data = {
+        "vehicle_id": f"TRK-{t_id}",
+        "license_plate": f"XYZ-910{t_id-100}",
+        "status": "Active"
+    }
+    client.publish("fleet/admin/registry", json.dumps(admin_data))
+
+# Give the router a second to process the SQL inserts
+time.sleep(2) 
+print("Fleet registered. Sending live telemetry...")
+# --------------------------
+
+cities_list = ["Messina", "Catania", "Palermo", "Rome", "Milan", "Naples"]
 
 try:
     while True:
-        # pick a random truck from 101 to 105
         t_id = random.randint(101, 105)
-        truck_name = f"TRK-{t_id}"
-
-        # create the json data
+        
         data = {
-            "vehicle_id": truck_name,
+            "vehicle_id": f"TRK-{t_id}",
             "speed_kmh": random.randint(50, 90),
             "fuel_percent": round(random.uniform(10.0, 100.0), 1),
+            "location": random.choice(cities_list),
             "timestamp": str(datetime.datetime.now())
         }
 
-        # send to the telemetry topic
         client.publish("fleet/telemetry/trucks", json.dumps(data))
-        
-        print("Sent:", data) # left this in for debugging
         time.sleep(2) 
         
 except KeyboardInterrupt:
