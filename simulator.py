@@ -10,7 +10,7 @@ client.loop_start()
 
 print("Simulator started. Registering fleet in SQL...")
 
-# --- NEW REGISTRY LOGIC ---
+
 for t_id in range(101, 106):
     admin_data = {
         "vehicle_id": f"TRK-{t_id}",
@@ -19,10 +19,10 @@ for t_id in range(101, 106):
     }
     client.publish("fleet/admin/registry", json.dumps(admin_data))
 
-# Give the router a second to process the SQL inserts
+
 time.sleep(2) 
 print("Fleet registered. Sending live telemetry...")
-# --------------------------
+
 
 cities_list = ["Messina", "Catania", "Palermo", "Rome", "Milan", "Naples"]
 
