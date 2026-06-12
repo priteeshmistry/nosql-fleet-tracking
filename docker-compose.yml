@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+
+  mysql_db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password123
+    ports:
+      - "3306:3306"
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  neo4j_db:
+    image: neo4j
+    environment:
+      NEO4J_AUTH: neo4j/your_password
+    ports:
+      - "7474:7474"
+      - "7687:7687"
